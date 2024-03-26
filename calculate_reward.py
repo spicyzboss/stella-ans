@@ -44,14 +44,15 @@ def calculate_reward(events: list[tuple[str, int, int]]) -> dict[str, float]:
             if timestamp == CURRENT_TIMESTAMP:
                 if user_shares.get(user) is not None:
                     user_shares[user] = max(0, user_shares[user]+share)
-                else:
-                    if is_greater_than_zero(share):
-                        user_shares.setdefault(user, share)
-                        user_balances.setdefault(user, 0)
+                elif is_greater_than_zero(share):
+                    user_shares.setdefault(user, share)
+                    user_balances.setdefault(user, 0)
 
         sum_shares = sum(user_shares.values())
-        if sum_shares:
-            for user in user_shares: user_balances[user] += user_shares[user]*DISTRIBUTION_EACH_TIMESTAMP/sum_shares
+
+        if is_greater_than_zero(sum_shares):
+            for user in user_shares:
+                user_balances[user] += user_shares[user]*DISTRIBUTION_EACH_TIMESTAMP/sum_shares
 
         events = list(filter(is_timestamp_greater(CURRENT_TIMESTAMP), events))
         CURRENT_TIMESTAMP += 1
