@@ -65,3 +65,9 @@ def test_ten_user_share_calculate_reward():
     assert type(ten_user_share) == dict
     assert len(ten_user_share) == 10
     assert ten_user_share == {'A': 1000.0, 'B': 1000.0, 'C': 1000.0, 'D': 1000.0, 'E': 1000.0, 'F': 1000.0, 'G': 1000.0, 'H': 1000.0, 'I': 1000.0, 'J': 1000.0}
+
+def test_unordered_user_calculate_reward():
+    unordered_user = calculate_reward([('B', 1, 1), ('A', 0, 2), ('A', 10, -1)])
+    assert type(unordered_user) == dict
+    assert len(unordered_user) == 2
+    assert unordered_user == {'A': 5005.556, 'B': 4994.444}
