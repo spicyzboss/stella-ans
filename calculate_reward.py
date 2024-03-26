@@ -29,11 +29,11 @@ apply_filter = lambda f: lambda a: list(filter(f, a))
 def calculate_reward(events: list[tuple[str, int, int]]) -> dict[str, float]:
     # Initialize current timestamp
     CURRENT_TIMESTAMP = 0
+    FILTERED_EVENTS = [invalid_user, invalid_timestamp, invalid_share]
 
     # Filter unwanted events
-    events = apply_filter(invalid_user)(events)
-    events = apply_filter(invalid_timestamp)(events)
-    events = apply_filter(invalid_share)(events)
+    for f in FILTERED_EVENTS:
+        events = apply_filter(f)(events)
 
     # Sort events by timestamp
     events.sort(key=order_by_timestamp)
