@@ -1,7 +1,7 @@
 USDT_POOL = 10_000
 MAX_TIMESTAMP = 3_600
 
-DISTRIBUTION_EACH_TIMESTAMP = USDT_POOL/MAX_TIMESTAMP
+DISTRIBUTION_EACH_TIMESTAMP = USDT_POOL / MAX_TIMESTAMP
 
 # utils functions
 is_type_equal = lambda a, t: type(a) == t
@@ -24,13 +24,14 @@ order_by_timestamp = lambda a: a[1]
 
 # map functions
 format_to_three_decimal_points = lambda a: (a[0], round(a[1], 3))
+apply_filter = lambda f: lambda a: list(filter(f, a))
 
 def calculate_reward(events: list[tuple[str, int, int]]) -> dict[str, float]:
     CURRENT_TIMESTAMP = 0
 
-    events = list(filter(invalid_user, events))
-    events = list(filter(invalid_timestamp, events))
-    events = list(filter(invalid_share, events))
+    events = apply_filter(invalid_user)(events)
+    events = apply_filter(invalid_timestamp)(events)
+    events = apply_filter(invalid_share)(events)
 
     events.sort(key=order_by_timestamp)
     
@@ -52,9 +53,9 @@ def calculate_reward(events: list[tuple[str, int, int]]) -> dict[str, float]:
 
         if is_greater_than_zero(sum_shares):
             for user in user_shares:
-                user_balances[user] += user_shares[user]*DISTRIBUTION_EACH_TIMESTAMP/sum_shares
+                user_balances[user] += user_shares[user] * DISTRIBUTION_EACH_TIMESTAMP / sum_shares
 
-        events = list(filter(is_timestamp_greater(CURRENT_TIMESTAMP), events))
+        events = apply_filter(is_timestamp_greater(CURRENT_TIMESTAMP))(events)
         CURRENT_TIMESTAMP += 1
 
     return dict(map(format_to_three_decimal_points, user_balances.items()))
